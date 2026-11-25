@@ -1,0 +1,12 @@
+{
+  "name": "Grue 25T — Gestion Chantier & Flotte",
+  "description": "Application mobile et tableau de bord de gestion pour grue mobile 25 tonnes : suivi des chantiers, caisse chauffeur, maintenance, bons de travail cachetés et rapports PDF.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
