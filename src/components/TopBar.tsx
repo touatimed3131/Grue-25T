@@ -237,13 +237,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                 ) : (
                   <RefreshCw className={`w-3.5 h-3.5 shrink-0 ${isSyncing ? 'animate-spin' : ''}`} />
                 )}
-                <span>
-                  {!isOnline
-                    ? `${t(lang, 'savedOffline')}${pendingCount > 0 ? ` (${pendingCount})` : ''}`
-                    : isSyncing
-                      ? t(lang, 'syncing')
-                      : `${t(lang, 'syncNow')} (${pendingCount})`}
-                </span>
+                
               </button>
             )}
 
