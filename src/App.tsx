@@ -64,6 +64,13 @@ export default function App() {
   const [driverName, setDriverName] = useState<string>(() => getSavedDriverName());
   const [driverAvatar, setDriverAvatar] = useState<string | null>(() => getSavedDriverAvatar());
   const [openDriverModalTick, setOpenDriverModalTick] = useState(0);
+    const [showSplash, setShowSplash] = useState<boolean>(() => !isAdminRoute);
+
+  useEffect(() => {
+    if (!showSplash) return;
+    const timer = window.setTimeout(() => setShowSplash(false), 1900);
+    return () => window.clearTimeout(timer);
+  }, [showSplash]);
   const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(() => {
     if (isAdminRoute || typeof window === 'undefined') return false;
     return localStorage.getItem(WELCOME_SEEN_KEY) !== '1';
@@ -461,50 +468,128 @@ export default function App() {
           onClose={() => setShowChildPinSetup(false)}
         />
       )}
-            {!isAdminActive && !childLocked && showWelcomeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-200">
+         {/* 1. Animated Splash Screen on App Launch */}
+      {!isAdminActive && showSplash && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950 text-white p-6">
+          <div className="animate-splash-logo flex flex-col items-center">
+            <div className="w-24 h-24 rounded-3xl bg-amber-400 text-slate-950 flex items-center justify-center font-black text-4xl shadow-2xl shadow-amber-400/30">
+              25T
+            </div>
+            <h1 className="mt-5 text-2xl font-black tracking-wide text-white">
+              GRUE 25T
+            </h1>
+            <p className="mt-1 text-xs font-semibold text-amber-400 uppercase tracking-widest">
+              {lang === 'ar' ? 'إدارة الرافعة والورشات' : 'Gestion Chantier & Flotte'}
+            </p>
+          </div>
+          <div className="w-48 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-8">
+            <div className="h-full bg-amber-400 rounded-full animate-loading-bar" />
+          </div>
+        </div>
+      )}
+
+      {/* 2. Full-Screen Opaque Welcome Screen (hides main UI completely until Enter/Skip) */}
+      {!isAdminActive && !childLocked && !showSplash && showWelcomeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 p-4 overflow-y-auto">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-slate-200 my-auto">
             <div className="flex flex-col items-center text-center">
-              <span className="inline-flex items-center justify-center px-3 py-1 rounded-xl bg-amber-400 text-slate-900 font-black text-lg shadow-sm mb-3">25T</span>
+              <span className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-2xl bg-amber-400 text-slate-900 font-black text-lg shadow-sm mb-3">
+                25T
+              </span>
               <h2 className="text-xl font-extrabold text-slate-900">
-                {lang === 'ar' ? 'مرحباً بك في تطبيق الرافعة 25T' : lang === 'en' ? 'Welcome to Grue 25T' : 'Bienvenue sur Grue 25T'}
+                {lang === 'ar'
+                  ? 'مرحباً بك في تطبيق الرافعة 25T'
+                  : lang === 'en'
+                  ? 'Welcome to Grue 25T'
+                  : 'Bienvenue sur Grue 25T'}
               </h2>
               <p className="mt-1 text-sm text-slate-500">
-                {lang === 'ar' ? 'أدخل اسمك وصورتك الشخصية (اختياري، ويمكنك تغييرهما في أي وقت)' : lang === 'en' ? 'Enter your name and photo (optional, changeable anytime)' : 'Entrez votre nom et photo (optionnel, modifiable à tout moment)'}
+                {lang === 'ar'
+                  ? 'أدخل اسمك وصورتك الشخصية (اختياري، ويمكنك تغييرهما في أي وقت)'
+                  : lang === 'en'
+                  ? 'Enter your name and photo (optional, changeable anytime)'
+                  : 'Entrez votre nom et photo (optionnel, modifiable à tout moment)'}
               </p>
+
               <label className="mt-5 relative cursor-pointer group">
                 <div className="w-24 h-24 rounded-full bg-slate-100 border-2 border-dashed border-amber-400 flex items-center justify-center overflow-hidden shadow-inner">
-                  {welcomeAvatarInput ? (<img src={welcomeAvatarInput} alt="Driver" className="w-full h-full object-cover" />) : (<span className="text-3xl text-slate-400">📷</span>)}
+                  {welcomeAvatarInput ? (
+                    <img
+                      src={welcomeAvatarInput}
+                      alt="Driver"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-3xl text-slate-400">📷</span>
+                  )}
                 </div>
                 <span className="mt-2 block text-xs font-bold text-amber-600">
-                  {lang === 'ar' ? 'اضغط لاختيار صورة' : lang === 'en' ? 'Tap to choose photo' : 'Appuyer pour choisir une photo'}
+                  {lang === 'ar'
+                    ? 'اضغط لاختيار صورة'
+                    : lang === 'en'
+                    ? 'Tap to choose photo'
+                    : 'Appuyer pour choisir une photo'}
                 </span>
-                <input type="file" accept="image/*" onChange={handleWelcomeAvatarUpload} className="hidden" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleWelcomeAvatarUpload}
+                  className="hidden"
+                />
               </label>
+
               <div className="w-full mt-4 text-start">
                 <label className="block text-xs font-bold text-slate-600 mb-1">
-                  {lang === 'ar' ? 'اسم السائق (اختياري)' : lang === 'en' ? 'Driver Name (Optional)' : 'Nom du chauffeur (Optionnel)'}
+                  {lang === 'ar'
+                    ? 'اسم السائق (اختياري)'
+                    : lang === 'en'
+                    ? 'Driver Name (Optional)'
+                    : 'Nom du chauffeur (Optionnel)'}
                 </label>
                 <input
                   type="text"
                   value={welcomeNameInput}
                   onChange={(e) => setWelcomeNameInput(e.target.value)}
-                  placeholder={lang === 'ar' ? 'مثال: محمد / أحمد...' : lang === 'en' ? 'e.g. Mohamed...' : 'Ex: Mohamed...'}
+                  placeholder={
+                    lang === 'ar'
+                      ? 'مثال: محمد / أحمد...'
+                      : lang === 'en'
+                      ? 'e.g. Mohamed...'
+                      : 'Ex: Mohamed...'
+                  }
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:border-amber-500 focus:outline-none"
                 />
               </div>
+
               <div className="w-full mt-6 flex flex-col gap-2.5">
-                <button type="button" onClick={handleSaveWelcome} className="w-full rounded-xl bg-amber-400 hover:bg-amber-500 text-slate-900 font-extrabold py-3 text-sm shadow-sm transition-colors">
-                  {lang === 'ar' ? 'حفظ والمتابعة' : lang === 'en' ? 'Save & Continue' : 'Enregistrer et continuer'}
+                <button
+                  type="button"
+                  onClick={handleSaveWelcome}
+                  className="w-full rounded-xl bg-amber-400 hover:bg-amber-500 text-slate-900 font-extrabold py-3 text-sm shadow-sm transition-colors"
+                >
+                  {lang === 'ar'
+                    ? 'حفظ والدخول'
+                    : lang === 'en'
+                    ? 'Save & Enter'
+                    : 'Enregistrer et entrer'}
                 </button>
-                <button type="button" onClick={handleSkipWelcome} className="w-full rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 text-sm transition-colors">
-                  {lang === 'ar' ? 'تخطي الآن' : lang === 'en' ? 'Skip for now' : 'Passer maintenant'}
+                <button
+                  type="button"
+                  onClick={handleSkipWelcome}
+                  className="w-full rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 text-sm transition-colors"
+                >
+                  {lang === 'ar'
+                    ? 'تخطي الآن'
+                    : lang === 'en'
+                    ? 'Skip for now'
+                    : 'Passer maintenant'}
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }
