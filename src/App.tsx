@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppStateData, CraneStatus, Language, ReservationItem } from './types';
 import {
   applyOptimisticUpdate,
@@ -29,6 +29,7 @@ import { ChauffeurView } from './components/ChauffeurView';
 import { AdminDashboard } from './components/AdminDashboard';
 
 const LANG_KEY = 'grue25t_lang_v1';
+const WELCOME_SEEN_KEY = 'grue25t_welcome_seen_v1';
 
 export default function App() {
   const isAdminRoute =
@@ -63,7 +64,52 @@ export default function App() {
   const [driverName, setDriverName] = useState<string>(() => getSavedDriverName());
   const [driverAvatar, setDriverAvatar] = useState<string | null>(() => getSavedDriverAvatar());
   const [openDriverModalTick, setOpenDriverModalTick] = useState(0);
+  const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(() => {
+    if (isAdminRoute || typeof window === 'undefined') return false;
+    return localStorage.getItem(WELCOME_SEEN_KEY) !== '1';
+  });
+  const [welcomeNameInput, setWelcomeNameInput] = useState<string>(() => getSavedDriverName());
+  const [welcomeAvatarInput, setWelcomeAvatarInput] = useState<string | null>(() => getSavedDriverAvatar());
 
+  const handleWelcomeAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.item(0);
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const scale = Math.min(1, 256 / Math.max(img.width, img.height));
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          setWelcomeAvatarInput(canvas.toDataURL('image/jpeg', 0.8));
+        } else {
+          setWelcomeAvatarInput(String(reader.result));
+        }
+      };
+      img.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveWelcome = () => {
+    const trimmed = welcomeNameInput.trim();
+    if (trimmed) setDriverName(setSavedDriverName(trimmed));
+    if (welcomeAvatarInput) {
+      setSavedDriverAvatar(welcomeAvatarInput);
+      setDriverAvatar(welcomeAvatarInput);
+    }
+    localStorage.setItem(WELCOME_SEEN_KEY, '1');
+    setShowWelcomeModal(false);
+  };
+
+  const handleSkipWelcome = () => {
+    localStorage.setItem(WELCOME_SEEN_KEY, '1');
+    setShowWelcomeModal(false);
+  };
   // Mutual Booking Notification Banner & Payment Notification Banner
   const [newBookingBanner, setNewBookingBanner] = useState<ReservationItem | null>(null);
   const [notifTick, setNotifTick] = useState(0);
@@ -414,6 +460,50 @@ export default function App() {
           }}
           onClose={() => setShowChildPinSetup(false)}
         />
+      )}
+            {!isAdminActive && !childLocked && showWelcomeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-200">
+            <div className="flex flex-col items-center text-center">
+              <span className="inline-flex items-center justify-center px-3 py-1 rounded-xl bg-amber-400 text-slate-900 font-black text-lg shadow-sm mb-3">25T</span>
+              <h2 className="text-xl font-extrabold text-slate-900">
+                {lang === 'ar' ? 'مرحباً بك في تطبيق الرافعة 25T' : lang === 'en' ? 'Welcome to Grue 25T' : 'Bienvenue sur Grue 25T'}
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">
+                {lang === 'ar' ? 'أدخل اسمك وصورتك الشخصية (اختياري، ويمكنك تغييرهما في أي وقت)' : lang === 'en' ? 'Enter your name and photo (optional, changeable anytime)' : 'Entrez votre nom et photo (optionnel, modifiable à tout moment)'}
+              </p>
+              <label className="mt-5 relative cursor-pointer group">
+                <div className="w-24 h-24 rounded-full bg-slate-100 border-2 border-dashed border-amber-400 flex items-center justify-center overflow-hidden shadow-inner">
+                  {welcomeAvatarInput ? (<img src={welcomeAvatarInput} alt="Driver" className="w-full h-full object-cover" />) : (<span className="text-3xl text-slate-400">📷</span>)}
+                </div>
+                <span className="mt-2 block text-xs font-bold text-amber-600">
+                  {lang === 'ar' ? 'اضغط لاختيار صورة' : lang === 'en' ? 'Tap to choose photo' : 'Appuyer pour choisir une photo'}
+                </span>
+                <input type="file" accept="image/*" onChange={handleWelcomeAvatarUpload} className="hidden" />
+              </label>
+              <div className="w-full mt-4 text-start">
+                <label className="block text-xs font-bold text-slate-600 mb-1">
+                  {lang === 'ar' ? 'اسم السائق (اختياري)' : lang === 'en' ? 'Driver Name (Optional)' : 'Nom du chauffeur (Optionnel)'}
+                </label>
+                <input
+                  type="text"
+                  value={welcomeNameInput}
+                  onChange={(e) => setWelcomeNameInput(e.target.value)}
+                  placeholder={lang === 'ar' ? 'مثال: محمد / أحمد...' : lang === 'en' ? 'e.g. Mohamed...' : 'Ex: Mohamed...'}
+                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+              <div className="w-full mt-6 flex flex-col gap-2.5">
+                <button type="button" onClick={handleSaveWelcome} className="w-full rounded-xl bg-amber-400 hover:bg-amber-500 text-slate-900 font-extrabold py-3 text-sm shadow-sm transition-colors">
+                  {lang === 'ar' ? 'حفظ والمتابعة' : lang === 'en' ? 'Save & Continue' : 'Enregistrer et continuer'}
+                </button>
+                <button type="button" onClick={handleSkipWelcome} className="w-full rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 text-sm transition-colors">
+                  {lang === 'ar' ? 'تخطي الآن' : lang === 'en' ? 'Skip for now' : 'Passer maintenant'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
