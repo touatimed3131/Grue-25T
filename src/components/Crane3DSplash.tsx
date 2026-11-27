@@ -37,11 +37,17 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
     return () => cancelAnimationFrame(frameId);
   }, [durationMs, onComplete]);
 
-  const t = progress / 100;
-  const rotateY = -16 + Math.sin(t * Math.PI) * 32;
-  const rotateX = 6 - Math.sin(t * Math.PI) * 5;
-  const scale = 0.92 + t * 0.16;
-  const boomLiftDeg = -t * 4.5;
+  // Smooth ease-in-out curve
+  const rawT = progress / 100;
+  const easeT = rawT < 0.5 ? 2 * rawT * rawT : 1 - Math.pow(-2 * rawT + 2, 2) / 2;
+
+  // Camera orbit around the crane
+  const rotateY = -14 + Math.sin(rawT * Math.PI) * 28;
+  const rotateX = 5 - Math.sin(rawT * Math.PI) * 4;
+  const scale = 0.94 + rawT * 0.12;
+
+  // Independent hydraulic boom lift angle (rotates upward from turret pivot on the right)
+  const boomLiftAngle = easeT * 18; // Lifts up to 18 degrees clearly!
 
   return (
     <div
@@ -51,7 +57,7 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
         zIndex: 99999,
         backgroundColor: '#070B14',
         backgroundImage:
-          'radial-gradient(circle at 50% 52%, rgba(245, 158, 11, 0.22) 0%, rgba(15, 23, 42, 0.85) 55%, #05080F 100%)',
+          'radial-gradient(circle at 50% 54%, rgba(245, 158, 11, 0.24) 0%, rgba(15, 23, 42, 0.88) 55%, #05080F 100%)',
         width: '100vw',
         height: '100vh',
         overflow: 'hidden',
@@ -63,6 +69,7 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
         perspective: '1100px',
       }}
     >
+      {/* Top Luxury Header */}
       {showOverlay && (
         <div style={{ textAlign: 'center', zIndex: 10 }}>
           <span
@@ -73,7 +80,7 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
               background: 'linear-gradient(135deg, #FDE047, #F59E0B)',
               color: '#090D16',
               fontWeight: 900,
-              fontSize: '16px',
+              fontSize: '15px',
               letterSpacing: '0.12em',
               boxShadow: '0 0 25px rgba(251, 191, 36, 0.45)',
             }}
@@ -87,7 +94,7 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
               fontSize: '30px',
               fontWeight: 900,
               letterSpacing: '0.14em',
-              textShadow: '0 4px 20px rgba(0,0,0,0.8)',
+              textShadow: '0 4px 20px rgba(0,0,0,0.85)',
             }}
           >
             {title}
@@ -107,6 +114,7 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
         </div>
       )}
 
+      {/* Center 3D Orbiting Real Crane with Articulated Hydraulic Boom */}
       <div
         style={{
           position: 'relative',
@@ -120,32 +128,55 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
           transition: 'transform 60ms linear',
         }}
       >
+        {/* Golden Ground Glow */}
         <div
           style={{
             position: 'absolute',
-            bottom: '-14px',
-            width: '82%',
-            height: '28px',
+            bottom: '4px',
+            width: '84%',
+            height: '26px',
             borderRadius: '50%',
-            background: 'radial-gradient(ellipse at center, rgba(251,191,36,0.55) 0%, rgba(251,191,36,0) 75%)',
+            background:
+              'radial-gradient(ellipse at center, rgba(251,191,36,0.55) 0%, rgba(251,191,36,0) 75%)',
             filter: 'blur(8px)',
           }}
         />
 
-        <img
-          src="/crane-real.png"
-          alt="Grue Mobile 25T"
-          style={{
-            width: '94%',
-            maxHeight: '42vh',
-            objectFit: 'contain',
-            borderRadius: '18px',
-            transform: `rotate(${boomLiftDeg}deg)`,
-            filter: 'drop-shadow(0 22px 32px rgba(0, 0, 0, 0.85)) contrast(1.06)',
-          }}
-        />
+        {/* Container holding both Truck Base and Lifting Boom */}
+        <div style={{ position: 'relative', width: '94%', maxHeight: '44vh' }}>
+          {/* Layer 1: Truck Chassis & Wheels (stays firmly planted on ground) */}
+          <img
+            src="/crane-real.png"
+            alt="Grue Mobile Chassis"
+            style={{
+              width: '100%',
+              height: 'auto',
+              display: 'block',
+              clipPath: 'polygon(0% 53%, 76% 53%, 76% 40%, 100% 40%, 100% 100%, 0% 100%)',
+              filter: 'drop-shadow(0 20px 28px rgba(0, 0, 0, 0.85)) contrast(1.06)',
+            }}
+          />
+
+          {/* Layer 2: Telescopic Hydraulic Boom (pivots upward smoothly from the rear turret) */}
+          <img
+            src="/crane-real.png"
+            alt="Grue Hydraulic Boom"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: 'auto',
+              display: 'block',
+              clipPath: 'polygon(0% 0%, 82% 0%, 82% 48%, 74% 55%, 0% 55%)',
+              transformOrigin: '78% 46%',
+              transform: `rotate(${boomLiftAngle}deg) scaleX(${1 + easeT * 0.04})`,
+              filter: 'drop-shadow(0 12px 18px rgba(0, 0, 0, 0.65)) contrast(1.08) brightness(1.04)',
+            }}
+          />
+        </div>
       </div>
 
+      {/* Bottom Luxury Progress Bar */}
       {showOverlay && (
         <div style={{ width: '100%', maxWidth: '260px', zIndex: 10, textAlign: 'center' }}>
           <div
