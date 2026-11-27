@@ -27,7 +27,7 @@ import { TopBar } from './components/TopBar';
 import { PinModal } from './components/PinModal';
 import { ChauffeurView } from './components/ChauffeurView';
 import { AdminDashboard } from './components/AdminDashboard';
-import { Crane3DSplash } from './components/Crane3DSplash';
+import  Crane3DSplash  from './components/Crane3DSplash';
 const LANG_KEY = 'grue25t_lang_v1';
 const WELCOME_SEEN_KEY = 'grue25t_welcome_seen_v2';
 
