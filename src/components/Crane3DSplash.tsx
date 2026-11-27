@@ -152,7 +152,7 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
               width: '100%',
               height: 'auto',
               display: 'block',
-              clipPath: 'polygon(0% 53%, 76% 53%, 76% 40%, 100% 40%, 100% 100%, 0% 100%)',
+clipPath: 'polygon(0% 56%, 38% 56%, 76% 42%, 100% 42%, 100% 100%, 0% 100%)',
               filter: 'drop-shadow(0 20px 28px rgba(0, 0, 0, 0.85)) contrast(1.06)',
             }}
           />
@@ -167,7 +167,7 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
               width: '100%',
               height: 'auto',
               display: 'block',
-              clipPath: 'polygon(0% 0%, 82% 0%, 82% 48%, 74% 55%, 0% 55%)',
+clipPath: 'polygon(0% 0%, 82% 0%, 82% 45%, 75% 45%, 38% 55%, 0% 55%)',
               transformOrigin: '78% 46%',
               transform: `rotate(${boomLiftAngle}deg) scaleX(${1 + easeT * 0.04})`,
               filter: 'drop-shadow(0 12px 18px rgba(0, 0, 0, 0.65)) contrast(1.08) brightness(1.04)',
