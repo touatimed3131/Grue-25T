@@ -1158,10 +1158,10 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 w-full h-full bg-[#070B14] overflow-hidden select-none ${className}`}
+     style={{ position: 'fixed', inset: 0, zIndex: 99999, backgroundColor: '#070B14', width: '100vw', height: '100vh', overflow: 'hidden' }}
     >
       {/* Isolated WebGL canvas mount */}
-      <div ref={mountRef} className="absolute inset-0 w-full h-full" />
+     <div ref={mountRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
 
       {/* Minimal luxury bottom title & progress hairline (solid surface, zero backdrop-blur) */}
       {showOverlay && (
