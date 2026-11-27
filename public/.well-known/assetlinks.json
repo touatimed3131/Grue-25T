@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.grue_25_t.twa",
+        "sha256_cert_fingerprints": ["AF:87:F0:60:E0:3C:17:60:61:3E:44:3D:D1:A8:F5:D3:40:9D:28:65:24:7E:F6:31:1B:13:0E:2E:50:AA:B5:FD"]
+      }
+    }]
