@@ -1,4 +1,4 @@
-const CACHE_NAME = 'grue-25t-offline-v6';
+const CACHE_NAME = 'grue-25t-offline-v7';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
