@@ -39,15 +39,12 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
 
   // Smooth ease-in-out curve
   const rawT = progress / 100;
-  const easeT = rawT < 0.5 ? 2 * rawT * rawT : 1 - Math.pow(-2 * rawT + 2, 2) / 2;
+
 
   // Camera orbit around the crane
   const rotateY = -14 + Math.sin(rawT * Math.PI) * 28;
   const rotateX = 5 - Math.sin(rawT * Math.PI) * 4;
   const scale = 0.94 + rawT * 0.12;
-
-  // Independent hydraulic boom lift angle (rotates upward from turret pivot on the right)
-  const boomLiftAngle = easeT * 18; // Lifts up to 18 degrees clearly!
 
   return (
     <div
