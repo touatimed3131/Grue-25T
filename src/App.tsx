@@ -27,7 +27,7 @@ import { TopBar } from './components/TopBar';
 import { PinModal } from './components/PinModal';
 import { ChauffeurView } from './components/ChauffeurView';
 import { AdminDashboard } from './components/AdminDashboard';
-
+import { Crane3DSplash } from './components/Crane3DSplash';
 const LANG_KEY = 'grue25t_lang_v1';
 const WELCOME_SEEN_KEY = 'grue25t_welcome_seen_v2';
 
@@ -68,7 +68,7 @@ export default function App() {
 
   useEffect(() => {
     if (!showSplash) return;
-    const timer = window.setTimeout(() => setShowSplash(false), 1900);
+    const timer = window.setTimeout(() => setShowSplash(false), 3500);
     return () => window.clearTimeout(timer);
   }, [showSplash]);
   const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(() => {
@@ -469,53 +469,15 @@ export default function App() {
         />
       )}
              {/* 1. Animated Mobile Wheeled Crane Splash Screen */}
-      {!isAdminActive && showSplash && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950 text-white p-6">
-          <div className="animate-splash-logo flex flex-col items-center">
-            <div className="w-32 h-32 rounded-3xl bg-slate-900 border-2 border-amber-400/50 flex items-center justify-center animate-glow-ring relative">
-              <svg viewBox="0 0 140 115" className="w-28 h-24 overflow-visible">
-                <line x1="6" y1="103" x2="134" y2="103" stroke="#334155" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="8 5" />
-                <rect x="12" y="80" width="84" height="11" rx="3" fill="#eab308" />
-                <rect x="28" y="88" width="5" height="13" rx="1" fill="#94a3b8" />
-                <rect x="74" y="88" width="5" height="13" rx="1" fill="#94a3b8" />
-                <path d="M12 80 L12 64 L24 56 L34 56 L34 80 Z" fill="#f59e0b" />
-                <polygon points="15,65 23,59 30,59 30,68 15,68" fill="#0f172a" />
-                <rect x="42" y="75" width="16" height="5" rx="1" fill="#64748b" />
-                <rect x="44" y="58" width="16" height="17" rx="2.5" fill="#fbbf24" />
-                <rect x="47" y="61" width="9" height="8" rx="1" fill="#0f172a" />
-                <g>
-                  <circle cx="22" cy="94" r="8" fill="#1e293b" stroke="#94a3b8" strokeWidth="2.5" />
-                  <circle cx="22" cy="94" r="3" fill="#fbbf24" />
-                  <circle cx="42" cy="94" r="8" fill="#1e293b" stroke="#94a3b8" strokeWidth="2.5" />
-                  <circle cx="42" cy="94" r="3" fill="#fbbf24" />
-                  <circle cx="64" cy="94" r="8" fill="#1e293b" stroke="#94a3b8" strokeWidth="2.5" />
-                  <circle cx="64" cy="94" r="3" fill="#fbbf24" />
-                  <circle cx="84" cy="94" r="8" fill="#1e293b" stroke="#94a3b8" strokeWidth="2.5" />
-                  <circle cx="84" cy="94" r="3" fill="#fbbf24" />
-                </g>
-                <g className="animate-crane-boom">
-                  <line x1="48" y1="72" x2="116" y2="20" stroke="#fbbf24" strokeWidth="7" strokeLinecap="round" />
-                  <line x1="76" y1="50" x2="118" y2="18" stroke="#fef08a" strokeWidth="3.5" strokeLinecap="round" />
-                  <line x1="56" y1="76" x2="76" y2="54" stroke="#cbd5e1" strokeWidth="3" strokeLinecap="round" />
-                  <g className="animate-crane-hook">
-                    <line x1="117" y1="20" x2="117" y2="50" stroke="#e2e8f0" strokeWidth="2" />
-                    <rect x="113" y="46" width="8" height="7" rx="1.5" fill="#f59e0b" />
-                    <path d="M114 53 C114 60, 121 60, 121 55" fill="none" stroke="#fbbf24" strokeWidth="2.5" strokeLinecap="round" />
-                    <rect x="108" y="60" width="18" height="12" rx="2" fill="#38bdf8" />
-                  </g>
-                </g>
-              </svg>
-            </div>
-            <div className="mt-5 flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-lg bg-amber-400 text-slate-950 font-black text-sm">25T</span>
-              <h1 className="text-2xl font-black tracking-wider text-white">GRUE MOBILE</h1>
-            </div>
-            <p className="mt-1.5 text-xs font-semibold text-slate-400 tracking-widest">
-              {lang === 'ar' ? 'جاري تجهيز مساحة العمل...' : 'Chargement de l’espace...'}
-            </p>
-          </div>
-        </div>
-      )}
+        {!isAdminActive && showSplash && (
+     <Crane3DSplash
+       durationMs={3500}
+       showOverlay={true}
+       title="GRUE 25T"
+       subtitle={lang === 'ar' ? 'إدارة الرافعة والورشات' : 'Gestion Chantier & Flotte'}
+       onComplete={() => setShowSplash(false)}
+     />
+   )}
 
       {/* 2. Full-Screen Opaque Welcome Screen (hides main UI completely until Enter/Skip) */}
       {!isAdminActive && !childLocked && !showSplash && showWelcomeModal && (
