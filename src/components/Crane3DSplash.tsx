@@ -152,7 +152,7 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
             }}
           />
         </div>
-
+      </div>
       {/* Bottom Luxury Progress Bar */}
       {showOverlay && (
         <div style={{ width: '100%', maxWidth: '260px', zIndex: 10, textAlign: 'center' }}>
