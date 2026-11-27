@@ -57,3 +57,25 @@
 .animate-loading-bar {
   animation: loadingBar 1.8s ease-in-out forwards;
 }
+@keyframes mobileCraneBoom {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(4deg); }
+}
+@keyframes mobileHookHoist {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-13px); }
+}
+@keyframes glowRing {
+  0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.25); }
+  50% { box-shadow: 0 0 45px rgba(251, 191, 36, 0.65); }
+}
+.animate-crane-boom {
+  transform-origin: 48px 72px;
+  animation: mobileCraneBoom 1.9s ease-in-out infinite;
+}
+.animate-crane-hook {
+  animation: mobileHookHoist 1.9s ease-in-out infinite;
+}
+.animate-glow-ring {
+  animation: glowRing 2s ease-in-out infinite;
+}
