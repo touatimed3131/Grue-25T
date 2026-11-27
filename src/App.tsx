@@ -251,7 +251,7 @@ export default function App() {
 
   // Trigger one-time daily local browser Notification at/after 18:00 if permitted and nothing logged today
   useEffect(() => {
-    if (!showEodReminder || notifPermission !== 'granted') return;
+  if (isAdminActive || !showEodReminder || notifPermission !== 'granted') return;
     if (typeof Notification === 'undefined') return;
     const sentKey = `grue25t_eod_notif_${todayStr}`;
     try {
@@ -263,7 +263,7 @@ export default function App() {
     } catch {
       // Ignore Notification constructor errors on restricted mobile WebViews
     }
-  }, [showEodReminder, notifPermission, todayStr, lang]);
+}, [isAdminActive, showEodReminder, notifPermission, todayStr, lang]);
 
   const handleRequestNotifications = useCallback(async () => {
     if (typeof Notification === 'undefined') return;
@@ -361,12 +361,12 @@ export default function App() {
         reservations={state.reservations}
         newBookingBanner={newBookingBanner}
         onDismissBookingBanner={() => setNewBookingBanner(null)}
-        paymentNotification={paymentNotification}
+    paymentNotification={isAdminActive ? paymentNotification : null}
         onDismissPaymentNotif={(id) => {
           dismissPaymentNotif(id);
           setNotifTick((n) => n + 1);
         }}
-        showEodReminder={showEodReminder}
+        showEodReminder={!isAdminActive && showEodReminder}
         onDismissEodReminder={() => setEodDismissedDate(todayStr)}
         notificationPermission={notifPermission}
         onRequestNotifications={handleRequestNotifications}
