@@ -23,7 +23,7 @@ const _camTarget = new THREE.Vector3(0, 1.55, 0.25);
 const _lookAtVec = new THREE.Vector3();
 
 function detectSoftwareWebGL(): boolean {
-  try {
+ return false;
     const probeCanvas = document.createElement('canvas');
     const gl = probeCanvas.getContext('webgl2');
     if (!gl) return true;
@@ -1158,7 +1158,7 @@ export const Crane3DSplash: React.FC<Crane3DSplashProps> = ({
 
   return (
     <div
-      className={`relative w-full h-full min-h-[320px] bg-[#070B14] overflow-hidden select-none ${className}`}
+      className={`fixed inset-0 z-50 w-full h-full bg-[#070B14] overflow-hidden select-none ${className}`}
     >
       {/* Isolated WebGL canvas mount */}
       <div ref={mountRef} className="absolute inset-0 w-full h-full" />
